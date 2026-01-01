@@ -98,7 +98,7 @@
         
         <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
             <select id="monthSelect" onchange="switchMonth()" style="width: auto;">
-                <option value="January">জানুয়ারি</option><option value="February">ফেব্রুয়ারি</option>
+                <option value="January">জানুয়ারি</option><option value="February">ফেব্রুয়ারি</option>
                 <option value="March">মার্চ</option><option value="April">এপ্রিল</option>
                 <option value="May">মে</option><option value="June">জুন</option>
                 <option value="July">জুলাই</option><option value="August">আগস্ট</option>
@@ -117,19 +117,19 @@
             <input type="number" id="dailyTarget" placeholder="১০" onchange="saveTarget()" max="24">
         </div>
         <div class="input-group">
-            <label id="inputLabel">আজকের পড়ার সময়:</label>
+            <label id="inputLabel">আজকের পড়ার সময়:</label>
             <div style="display:flex; gap:10px;">
                 <input type="number" id="hoursRead" placeholder="ঘণ্টা" max="24">
                 <button class="btn btn-primary" onclick="lockData()">জমা দিন</button>
             </div>
-            <small id="lockMsg" style="color:var(--success); display:none; font-weight:bold; margin-top:5px;">✅ ডাটা সেভ হয়েছে!</small>
+            <small id="lockMsg" style="color:var(--success); display:none; font-weight:bold; margin-top:5px;">✅ ডাটা সেভ হয়েছে!</small>
         </div>
     </div>
 
     <div class="stats-grid">
-        <div class="stat-box yesterday-highlight"><h3>গতকালের পড়া</h3><p id="yesterdayStat">০ ঘণ্টা</p></div>
-        <div class="stat-box"><h3>নির্বাচিত দিনের পড়া</h3><p id="todayStat">০ ঘণ্টা</p></div>
-        <div class="stat-box"><h3>দৈনিক গড়</h3><p id="avgStat">০ ঘণ্টা</p></div>
+        <div class="stat-box yesterday-highlight"><h3>গতকালের পড়া</h3><p id="yesterdayStat">০ ঘণ্টা</p></div>
+        <div class="stat-box"><h3>নির্বাচিত দিনের পড়া</h3><p id="todayStat">০ ঘণ্টা</p></div>
+        <div class="stat-box"><h3>দৈনিক গড়</h3><p id="avgStat">০ ঘণ্টা</p></div>
         <div class="stat-box"><h3>মাসিক মোট</h3><p id="monthStat">০ ঘণ্টা</p></div>
         <div class="stat-box"><h3>বাৎসরিক সম্ভাব্য</h3><p id="yearStat">০ ঘণ্টা</p></div>
     </div>
@@ -150,9 +150,8 @@
 <script>
     const quotes = ["সাফল্য প্রতিদিনের ছোট চেষ্টা!", "পরিশ্রমই সাফল্যের চাবিকাঠি!", "লক্ষ্য স্থির রাখুন!", "আজকের পরিশ্রমই আগামী দিনের শান্তি!"];
     const animations = ["animate__bounceIn", "animate__fadeInDown", "animate__zoomIn", "animate__tada"];
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-    let currentMonth = localStorage.getItem('activeMonth') || months[new Date().getMonth()];
+    let currentMonth = localStorage.getItem('activeMonth') || 'January';
     let selectedDay = new Date().getDate();
     document.getElementById('monthSelect').value = currentMonth;
 
@@ -193,8 +192,7 @@
     }
 
     function checkSelection() {
-        const isToday = (selectedDay === new Date().getDate() && currentMonth === months[new Date().getMonth()]);
-        document.getElementById('inputLabel').innerText = isToday ? "আজকের পড়ার সময়:" : selectedDay + " তারিখের পড়ার সময়:";
+        document.getElementById('inputLabel').innerText = (selectedDay === new Date().getDate()) ? "আজকের পড়ার সময়:" : selectedDay + " তারিখের পড়ার সময়:";
         document.getElementById('hoursRead').value = studyData[selectedDay - 1] || "";
         document.getElementById('lockMsg').style.display = 'none';
     }
@@ -224,24 +222,8 @@
     function updateStats() {
         const total = studyData.reduce((a, b) => a + b, 0);
         const activeDays = studyData.filter(x => x > 0).length || 1;
-        
-        // গতকালের পড়া বের করার সঠিক লজিক
-        let yesterdayHours = 0;
-        const todayReal = new Date().getDate();
-        const monthIndex = months.indexOf(months[new Date().getMonth()]);
-
-        if (todayReal > 1) {
-            // যদি মাসের ১ তারিখ না হয়, তবে একই মাসের আগের দিনের ডাটা নাও
-            const currentMonthData = JSON.parse(localStorage.getItem(`studyData_${months[new Date().getMonth()]}`)) || new Array(31).fill(0);
-            yesterdayHours = currentMonthData[todayReal - 2] || 0;
-        } else {
-            // যদি মাসের ১ তারিখ হয়, তবে গত মাসের শেষ দিনের ডাটা নাও
-            const prevMonthIndex = monthIndex === 0 ? 11 : monthIndex - 1;
-            const prevMonthData = JSON.parse(localStorage.getItem(`studyData_${months[prevMonthIndex]}`)) || new Array(31).fill(0);
-            yesterdayHours = prevMonthData[30] || prevMonthData[29] || prevMonthData[27] || 0;
-        }
-
-        document.getElementById('yesterdayStat').innerText = yesterdayHours + " ঘণ্টা";
+        const realToday = new Date().getDate();
+        document.getElementById('yesterdayStat').innerText = (realToday > 1 ? studyData[realToday - 2] : 0) + " ঘণ্টা";
         document.getElementById('todayStat').innerText = (studyData[selectedDay-1] || 0) + " ঘণ্টা";
         document.getElementById('avgStat').innerText = (total / activeDays).toFixed(1) + " ঘণ্টা";
         document.getElementById('monthStat').innerText = total + " ঘণ্টা";
@@ -249,25 +231,27 @@
     }
 
     function renderCharts() {
+        const ctx1 = document.getElementById('monthlyChart');
         if(window.mChart) window.mChart.destroy();
-        window.mChart = new Chart(document.getElementById('monthlyChart'), {
+        window.mChart = new Chart(ctx1, {
             type: 'bar',
             data: {
                 labels: Array.from({length: 31}, (_, i) => i + 1),
-                datasets: [{ label: 'পড়ার ঘণ্টা', data: studyData, backgroundColor: '#6366f1', borderRadius: 5 }]
+                datasets: [{ label: 'পড়ার ঘণ্টা', data: studyData, backgroundColor: '#6366f1', borderRadius: 5 }]
             },
             options: { 
                 responsive: true, maintainAspectRatio: false,
                 scales: { 
-                    x: { title: { display: true, text: 'দিনসমূহ' } },
-                    y: { beginAtZero: true, max: 24 } 
+                    x: { title: { display: true, text: 'Days' }, ticks: { maxRotation: 0 } },
+                    y: { title: { display: true, text: 'Hours' }, beginAtZero: true, max: 24, ticks: { stepSize: 2 } } 
                 }
             }
         });
 
+        const ctx2 = document.getElementById('progressChart');
         if(window.pChart) window.pChart.destroy();
         const done = studyData[selectedDay-1] || 0;
-        window.pChart = new Chart(document.getElementById('progressChart'), {
+        window.pChart = new Chart(ctx2, {
             type: 'doughnut',
             data: {
                 labels: ['সম্পূর্ণ', 'বাকি'],
@@ -277,6 +261,7 @@
         });
     }
 
+    // ব্যাকআপ ফাংশন
     function exportData() {
         const allData = {};
         for (let i = 0; i < localStorage.length; i++) {
@@ -284,23 +269,33 @@
             allData[key] = localStorage.getItem(key);
         }
         const blob = new Blob([JSON.stringify(allData)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `StudyTracker_Backup.json`;
+        a.href = url;
+        a.download = `StudyTracker_Backup_${new Date().toLocaleDateString()}.json`;
         a.click();
     }
 
     function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
-            const data = JSON.parse(e.target.result);
-            Object.keys(data).forEach(k => localStorage.setItem(k, data[k]));
-            location.reload();
+            try {
+                const importedData = JSON.parse(e.target.result);
+                Object.keys(importedData).forEach(key => {
+                    localStorage.setItem(key, importedData[key]);
+                });
+                alert("ডেটা সফলভাবে আপলোড হয়েছে! পেজটি রিলোড হবে।");
+                location.reload();
+            } catch (err) { alert("ভুল ফাইল সিলেক্ট করেছেন!"); }
         };
-        reader.readAsText(event.target.files[0]);
+        reader.readAsText(file);
     }
 
     init();
 </script>
 </body>
 </html>
+
+
