@@ -14,6 +14,7 @@
             --glass: rgba(255, 255, 255, 0.92);
             --primary: #6366f1;
             --success: #10b981;
+            --danger: #ef4444;
         }
 
         body { 
@@ -40,9 +41,9 @@
             margin: auto;
         }
 
-        header { text-align: center; margin-bottom: 25px; }
+        header { text-align: center; margin-bottom: 20px; }
         .main-title { 
-            font-family: 'Poppins', sans-serif; font-size: 35px; color: #1e1b4b; 
+            font-family: 'Poppins', sans-serif; font-size: clamp(24px, 5vw, 35px); color: #1e1b4b; 
             margin: 0; letter-spacing: 2px; text-transform: uppercase;
         }
         .author { font-family: 'Poppins', sans-serif; font-weight: 600; color: #4338ca; font-size: 16px; margin-top: 5px; }
@@ -51,7 +52,6 @@
             background: #1e1b4b; color: white; padding: 15px; border-radius: 15px;
             margin: 20px 0; text-align: center; font-size: 18px; font-weight: 600;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            min-height: 25px;
         }
 
         .input-card { 
@@ -66,11 +66,14 @@
             font-size: 16px; font-family: 'Hind Siliguri', sans-serif; box-sizing: border-box;
         }
 
-        button { 
-            background: #6366f1; color: white; border: none; padding: 12px 25px; 
-            border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; width: 100%;
+        .btn { 
+            color: white; border: none; padding: 12px 20px; 
+            border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; 
+            font-family: 'Hind Siliguri', sans-serif;
         }
-        button:hover { transform: scale(1.02); background: #4f46e5; }
+        .btn-primary { background: #6366f1; width: 100%; }
+        .btn-backup { background: #0f172a; font-size: 14px; margin: 5px; }
+        .btn:hover { opacity: 0.85; transform: translateY(-2px); }
 
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-box { background: white; padding: 15px; border-radius: 18px; text-align: center; border: 1px solid #f1f5f9; }
@@ -81,9 +84,9 @@
         .charts-section { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
         .chart-container { background: white; padding: 25px; border-radius: 20px; min-height: 400px; border: 1px solid #f1f5f9; }
 
-        @media (max-width: 900px) {
-            .charts-section { grid-template-columns: 1fr; }
-        }
+        .backup-controls { text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px dashed #cbd5e1; }
+
+        @media (max-width: 900px) { .charts-section { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -91,25 +94,18 @@
 <div class="container">
     <header>
         <h1 class="main-title">STUDY TRACKER</h1>
-        <div class="author">Made by Shahriar Naim or Rashid</div>
+        <div class="author">Made by Shahriar Naim Or Rashid</div>
         
         <div style="margin-top: 15px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
             <select id="monthSelect" onchange="switchMonth()" style="width: auto;">
-                <option value="January">জানুয়ারি</option>
-                <option value="February">ফেব্রুয়ারি</option>
-                <option value="March">মার্চ</option>
-                <option value="April">এপ্রিল</option>
-                <option value="May">মে</option>
-                <option value="June">জুন</option>
-                <option value="July">জুলাই</option>
-                <option value="August">আগস্ট</option>
-                <option value="September">সেপ্টেম্বর</option>
-                <option value="October">অক্টোবর</option>
-                <option value="November">নভেম্বর</option>
-                <option value="December">ডিসেম্বর</option>
+                <option value="January">জানুয়ারি</option><option value="February">ফেব্রুয়ারি</option>
+                <option value="March">মার্চ</option><option value="April">এপ্রিল</option>
+                <option value="May">মে</option><option value="June">জুন</option>
+                <option value="July">জুলাই</option><option value="August">আগস্ট</option>
+                <option value="September">সেপ্টেম্বর</option><option value="October">অক্টোবর</option>
+                <option value="November">নভেম্বর</option><option value="December">ডিসেম্বর</option>
             </select>
-            <select id="dateSelect" onchange="switchDate()" style="width: auto;">
-                </select>
+            <select id="dateSelect" onchange="switchDate()" style="width: auto;"></select>
         </div>
     </header>
 
@@ -121,12 +117,12 @@
             <input type="number" id="dailyTarget" placeholder="১০" onchange="saveTarget()" max="24">
         </div>
         <div class="input-group">
-            <label id="inputLabel">আজকের পড়ার সময় (সর্বোচ্চ ২৪ঘণ্টা):</label>
+            <label id="inputLabel">আজকের পড়ার সময়:</label>
             <div style="display:flex; gap:10px;">
                 <input type="number" id="hoursRead" placeholder="ঘণ্টা" max="24">
-                <button id="lockBtn" onclick="lockData()">জমা দিন</button>
+                <button class="btn btn-primary" onclick="lockData()">জমা দিন</button>
             </div>
-            <small id="lockMsg" style="color:var(--success); display:none; font-weight:bold; margin-top:5px;">✅ ডাটা আপডেট করা হয়েছে!</small>
+            <small id="lockMsg" style="color:var(--success); display:none; font-weight:bold; margin-top:5px;">✅ ডাটা সেভ হয়েছে!</small>
         </div>
     </div>
 
@@ -142,28 +138,22 @@
         <div class="chart-container"><canvas id="monthlyChart"></canvas></div>
         <div class="chart-container"><canvas id="progressChart"></canvas></div>
     </div>
+
+    <div class="backup-controls">
+        <button class="btn btn-backup" onclick="exportData()">📥 ডেটা ব্যাকআপ (Export)</button>
+        <button class="btn btn-backup" onclick="document.getElementById('importFile').click()">📤 ডেটা আপলোড (Import)</button>
+        <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+        <p style="font-size: 12px; color: #64748b;">*আপনার ডেটা শুধু আপনার ডিভাইসেই সংরক্ষিত থাকে।</p>
+    </div>
 </div>
 
 <script>
-    const quotes = ["সাফল্য মানে প্রতিদিনের ছোট ছোট চেষ্টা!", "কঠোর পরিশ্রমই সাফল্যের চাবিকাঠি!", "আজকের কষ্ট আগামীর উজ্জ্বল ভবিষ্যৎ!", "আপনার লক্ষ্য বড় রাখুন!", "পড়ালেখা জীবন গড়ার হাতিয়ার!"];
-    const animations = ["animate__bounceIn", "animate__fadeInDown", "animate__flipInX", "animate__zoomIn", "animate__tada"];
+    const quotes = ["সাফল্য প্রতিদিনের ছোট চেষ্টা!", "পরিশ্রমই সাফল্যের চাবিকাঠি!", "লক্ষ্য স্থির রাখুন!", "আজকের পরিশ্রমই আগামী দিনের শান্তি!"];
+    const animations = ["animate__bounceIn", "animate__fadeInDown", "animate__zoomIn", "animate__tada"];
 
     let currentMonth = localStorage.getItem('activeMonth') || 'January';
     let selectedDay = new Date().getDate();
-    
     document.getElementById('monthSelect').value = currentMonth;
-
-    function populateDates() {
-        const dateSelect = document.getElementById('dateSelect');
-        dateSelect.innerHTML = "";
-        for (let i = 1; i <= 31; i++) {
-            let opt = document.createElement('option');
-            opt.value = i;
-            opt.innerHTML = i + " তারিখ";
-            if (i === selectedDay) opt.selected = true;
-            dateSelect.appendChild(opt);
-        }
-    }
 
     let studyData = JSON.parse(localStorage.getItem(`studyData_${currentMonth}`)) || new Array(31).fill(0);
     let target = localStorage.getItem(`target_${currentMonth}`) || 0;
@@ -177,6 +167,17 @@
         checkSelection();
     }
 
+    function populateDates() {
+        const dateSelect = document.getElementById('dateSelect');
+        dateSelect.innerHTML = "";
+        for (let i = 1; i <= 31; i++) {
+            let opt = document.createElement('option');
+            opt.value = i; opt.innerHTML = i + " তারিখ";
+            if (i === selectedDay) opt.selected = true;
+            dateSelect.appendChild(opt);
+        }
+    }
+
     function switchMonth() {
         currentMonth = document.getElementById('monthSelect').value;
         localStorage.setItem('activeMonth', currentMonth);
@@ -187,14 +188,11 @@
 
     function switchDate() {
         selectedDay = parseInt(document.getElementById('dateSelect').value);
-        checkSelection();
-        updateStats();
-        renderCharts();
+        checkSelection(); updateStats(); renderCharts();
     }
 
     function checkSelection() {
-        const isToday = (selectedDay === new Date().getDate());
-        document.getElementById('inputLabel').innerText = isToday ? "আজকের পড়ার সময় (ঘণ্টা):" : selectedDay + " তারিখের পড়ার সময়:";
+        document.getElementById('inputLabel').innerText = (selectedDay === new Date().getDate()) ? "আজকের পড়ার সময়:" : selectedDay + " তারিখের পড়ার সময়:";
         document.getElementById('hoursRead').value = studyData[selectedDay - 1] || "";
         document.getElementById('lockMsg').style.display = 'none';
     }
@@ -207,35 +205,25 @@
 
     function saveTarget() {
         let val = parseFloat(document.getElementById('dailyTarget').value);
-        if (val > 24) val = 24;
-        target = val || 0;
+        target = (val > 24) ? 24 : (val || 0);
         localStorage.setItem(`target_${currentMonth}`, target);
         renderCharts();
     }
 
     function lockData() {
         let hours = parseFloat(document.getElementById('hoursRead').value);
-        if (isNaN(hours) || hours < 0 || hours > 24) return alert("সঠিক ঘণ্টা দিন (০-২৪)!");
-        
+        if (isNaN(hours) || hours < 0 || hours > 24) return alert("০-২৪ এর মধ্যে সংখ্যা দিন!");
         studyData[selectedDay - 1] = hours;
         localStorage.setItem(`studyData_${currentMonth}`, JSON.stringify(studyData));
         document.getElementById('lockMsg').style.display = 'block';
-        updateStats();
-        renderCharts();
+        updateStats(); renderCharts();
     }
 
     function updateStats() {
         const total = studyData.reduce((a, b) => a + b, 0);
         const activeDays = studyData.filter(x => x > 0).length || 1;
         const realToday = new Date().getDate();
-        
-        // গতকালকের ডাটা বের করা
-        let yesterdayVal = 0;
-        if (realToday > 1) {
-            yesterdayVal = studyData[realToday - 2];
-        }
-
-        document.getElementById('yesterdayStat').innerText = yesterdayVal + " ঘণ্টা";
+        document.getElementById('yesterdayStat').innerText = (realToday > 1 ? studyData[realToday - 2] : 0) + " ঘণ্টা";
         document.getElementById('todayStat').innerText = (studyData[selectedDay-1] || 0) + " ঘণ্টা";
         document.getElementById('avgStat').innerText = (total / activeDays).toFixed(1) + " ঘণ্টা";
         document.getElementById('monthStat').innerText = total + " ঘণ্টা";
@@ -271,6 +259,38 @@
             },
             options: { cutout: '75%', maintainAspectRatio: false }
         });
+    }
+
+    // ব্যাকআপ ফাংশন
+    function exportData() {
+        const allData = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            allData[key] = localStorage.getItem(key);
+        }
+        const blob = new Blob([JSON.stringify(allData)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `StudyTracker_Backup_${new Date().toLocaleDateString()}.json`;
+        a.click();
+    }
+
+    function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                Object.keys(importedData).forEach(key => {
+                    localStorage.setItem(key, importedData[key]);
+                });
+                alert("ডেটা সফলভাবে আপলোড হয়েছে! পেজটি রিলোড হবে।");
+                location.reload();
+            } catch (err) { alert("ভুল ফাইল সিলেক্ট করেছেন!"); }
+        };
+        reader.readAsText(file);
     }
 
     init();
